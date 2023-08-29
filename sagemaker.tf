@@ -2,6 +2,7 @@ resource "aws_sagemaker_notebook_instance" "ni" {
   name = "featureform-notebook"
   role_arn = aws_iam_role.notebook.arn
   instance_type = "ml.t2.medium"
+  default_code_repository = "https://github.com/featureform/featureform-redis-aws-immersion-day"
 }
 
 # EKS Node IAM Role

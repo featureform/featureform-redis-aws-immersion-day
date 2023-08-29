@@ -46,6 +46,11 @@ variable "tags" {
 }
 
 variable "hosted_zone" {
-  description = "The hosted zone to use in AWS"
+  description = "The hosted zone name to use in AWS"
+  type        = string
+}
+
+variable "hosted_zone_id" {
+  description = "The hosted zone ID"
   type        = string
 }

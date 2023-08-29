@@ -1,6 +1,10 @@
+locals {
+  cluster_name = lower("${var.project}-cluster")
+}
+
 # EKS Cluster
 resource "aws_eks_cluster" "this" {
-  name     = "${var.project}-cluster"
+  name     = local.cluster_name
   role_arn = aws_iam_role.cluster.arn
   version  = "1.24"
 
@@ -19,6 +23,24 @@ resource "aws_eks_cluster" "this" {
   depends_on = [
     aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy
   ]
+}
+
+resource "null_resource" "merge_kubeconfig" {
+  triggers = {
+    always = timestamp()
+  }
+
+  depends_on = [aws_eks_cluster.this]
+
+  provisioner "local-exec" {
+    interpreter = ["/bin/bash", "-c"]
+    command = <<EOT
+      set -e
+      echo 'Applying Auth ConfigMap with kubectl...'
+      aws eks wait cluster-active --name '${local.cluster_name}'
+      aws eks update-kubeconfig --name '${local.cluster_name}' --alias '${local.cluster_name}-${var.region}' --region=${var.region}
+    EOT
+  }
 }
 
 
