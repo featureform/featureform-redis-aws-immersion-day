@@ -2,6 +2,8 @@ resource "helm_release" "featureform" {
   name = "featureform"
   repository = "https://storage.googleapis.com/featureform-helm"
   chart = "featureform"
+  timeout = 1200
+  wait = true
   set {
     name = "global.publicCert"
     value = "true"
